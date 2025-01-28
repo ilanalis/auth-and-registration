@@ -1,0 +1,56 @@
+networks:
+    dev:
+
+services:
+    frontend:
+        networks:
+            - dev
+        # Set the container name
+#        container_name: react-app-dockerize_c
+
+        # set name for the image
+#        image: react-app-dockerize_i
+
+        # Build the image using the Dockerfile in the current context
+        build:
+            context: ./frontend
+            dockerfile: Dockerfile
+
+            # Map host port 5002 to container port 5002
+        ports:
+            - "5002:5002" #<host_port>:<container_port/protocol_port>
+
+        # Mount the current directory to /app in the container
+        volumes:
+            - ./frontend:/app
+            - /app/node_modules
+
+        # Specify the command to run when the container starts
+        command: npm run dev
+        depends_on:
+            - db
+    backend:
+        networks:
+            - dev
+        build:
+            context: ./backend
+        volumes:
+            - ./backend:/usr/src/app
+        command: npm run start
+        ports:
+            -   "8000:8000"
+        depends_on:
+            -   db
+    db:
+        image: postgres:latest
+        ports:
+            - "5432:5432"
+        restart: always
+        environment:
+            POSTGRES_PASSWORD: postgres
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+
+volumes:
+    postgres_data:
+        driver: local
