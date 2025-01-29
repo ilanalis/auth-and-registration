@@ -47,8 +47,8 @@ const FormComponent = ({action}) => {
             </div>
             <div className="d-flex justify-content-center">
                 {action === 'login'
-                    ? <button type="submit" className="btn btn-primary">Login</button>
-                    : <button type="submit" className="btn btn-primary">Sign up</button>
+                    ? <button type="submit" className="btn btn-primary w-25">Login</button>
+                    : <button type="submit" className="btn btn-primary w-25">Sign up</button>
                 }
             </div>
         </form>
