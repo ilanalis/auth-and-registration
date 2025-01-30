@@ -42,6 +42,8 @@ services:
         depends_on:
             -   db
     db:
+        networks:
+            - dev
         image: postgres:latest
         ports:
             - "5432:5432"

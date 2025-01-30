@@ -1,8 +1,8 @@
 import styles from './style.module.css';
 import cn from 'classnames';
-
 import AuthorizationLink from "./components/authorizationLink/AuthorizationLink.jsx";
 import {Outlet} from "react-router-dom";
+import {ToastContainer} from "react-toastify";
 
 const AuthorizationLayout = () => {
     return (
@@ -16,6 +16,7 @@ const AuthorizationLayout = () => {
                 </nav>
                 <Outlet />
             </div>
+            <ToastContainer position="bottom-right"/>
         </>
     );
 };
