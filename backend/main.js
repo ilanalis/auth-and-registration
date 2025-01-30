@@ -21,15 +21,6 @@ app.use(cors({
 
 app.use(express.json());
 
-app.get('/api/endpoint', (req, res) => {
-    const data = {
-        message: 'Привет с бэкенда!',
-        success: true,
-    };
-    res.status(200).json(data);
-});
-
-
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
@@ -54,7 +45,6 @@ app.post('/api/signup', async (req, res) => {
             'INSERT INTO "user" (name, email, password) VALUES ($1, $2, $3) RETURNING *',
             [name, email, hashedPassword]
         );
-
         res.status(201).json({
             message: 'User added successfully',
             user: result.rows[0],
@@ -67,9 +57,8 @@ app.post('/api/signup', async (req, res) => {
 
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
-    console.log(email, password);
     try {
-        // Получаем пользователя из базы
+
         const userResult = await pool.query(
             'SELECT * FROM "user" WHERE email = $1',
             [email]
@@ -77,12 +66,10 @@ app.post('/api/login', async (req, res) => {
 
 
         if (userResult.rows.length === 0) {
-            return res.status(400).json({ message: 'Invalid email or password' });
+            return res.status(400).json({ message: 'No user found with this email. Please sign up.' });
         }
 
         const user = userResult.rows[0];
-        console.log('Stored hashed password:', user.password);  // Логируем сохраненный хеш пароля
-        console.log('Password attempt:', password);
 
         const isMatch = await bcrypt.compare(password, user.password);
 
@@ -94,5 +81,15 @@ app.post('/api/login', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error logging in', error });
+    }
+});
+
+app.get('/api/users', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT id, name, email FROM "user"');
+        res.json(result.rows);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).json({ message: 'Error retrieving users', error });
     }
 });

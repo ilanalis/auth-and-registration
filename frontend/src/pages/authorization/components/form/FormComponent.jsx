@@ -2,12 +2,14 @@ import {useState} from "react";
 import PropTypes from "prop-types";
 import {toast} from "react-toastify";
 import {login, signup} from "../../../../utils/api.js";
-
+import {useUserContext} from "../../../../contexts/useUserContext.jsx";
 
 const FormComponent = ({action}) => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const { setIsUserLoggedIn } = useUserContext();
+
 
     const handleNameChange = (e) => {
         setName(e.target.value);
@@ -29,7 +31,10 @@ const FormComponent = ({action}) => {
                 const response = await signup(name, email, password);
                 if (!response.success) {
                     notify(response.message)
+                }else{
+                    setIsUserLoggedIn(true);
                 }
+
             }catch(err) {
                 notify('Oops.. something went wrong. Try again later.');
             }
@@ -38,6 +43,8 @@ const FormComponent = ({action}) => {
                 const response = await login(email, password);
                 if (!response.success) {
                     notify(response.message)
+                }else{
+                    setIsUserLoggedIn(true);
                 }
             }catch (err){
                 notify('Oops.. something went wrong. Try again later.');
